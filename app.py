@@ -5,8 +5,8 @@ import plotly.express as px
 import os
 
 # 1. 페이지 설정 및 제목
-st.set_page_config(page_title="공공데이터 분석 대시보드", layout="wide")
-st.title("📊 성별 및 사회 갈등 인식 분석 대시보드")
+st.set_page_config(page_title="젠더갈등 인식 분석 대시보드", layout="wide")
+st.title("📊 젠더갈등 인식 분석 대시보드")
 st.markdown("---")
 
 # 2. 데이터 연결 설정 (CSV 파일을 가상 DB로 사용)
