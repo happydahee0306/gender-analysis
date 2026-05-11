@@ -10,7 +10,7 @@ st.title("📊 성별 및 사회 갈등 인식 분석 대시보드")
 st.markdown("---")
 
 # 2. 데이터베이스 연결 확인
-db_file = "final_data.db"
+db_file = "kor_data.db"
 
 if not os.path.exists(db_file):
     st.error(f"❌ '{db_file}' 파일을 찾을 수 없습니다. 데이터베이스 파일이 같은 폴더에 있는지 확인해주세요.")
