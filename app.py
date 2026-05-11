@@ -58,10 +58,17 @@ try:
     col1_1, col1_2 = st.columns([1.5, 1])
 
     with col1_1:
+        # y축 이름과 타이틀 설정
         fig1 = px.bar(df1, x='성별', y='Q2_합계_평균', color='성별', 
                       title="성별에 따른 남녀평등수준 평균 점수",
                       text_auto='.2f', 
-                      color_discrete_sequence=['#ff9999','#66b3ff'])
+                      color_discrete_sequence=['#ff9999','#66b3ff'],
+                      # [요청 반영 1] y축 이름 변경
+                      labels={'Q2_합계_평균': '남녀평등이 어느 정도 이루어지고 있다고 생각하는가 (1~10점)'})
+        
+        # [요청 반영 2] y축 범위 0~10으로 고정
+        fig1.update_yaxes(range=[0, 10])
+        
         st.plotly_chart(fig1, use_container_width=True)
 
     with col1_2:
