@@ -93,28 +93,44 @@ st.header("2. 젠더갈등원인 (응답 점수별 분포)")
 
 sql2 = """
 SELECT 
-    Q5 AS 응답_점수, 
+    CASE 
+        WHEN Q5 = 1 THEN '어려서부터 학습된 성별에 대한 고정관념'
+        WHEN Q5 = 2 THEN '가부장적 사회문화'
+        WHEN Q5 = 3 THEN '여성에게 주어지는 특혜와 차별'
+        WHEN Q5 = 4 THEN '남성에게 주어지는 특혜와 차별'
+        WHEN Q5 = 5 THEN '언론 및 방송매체의 성별 갈등 조장'
+    END AS 갈등_원인_항목,
     COUNT(*) AS 응답자_수
 FROM kor_data
 WHERE Q5 BETWEEN 1 AND 5
-GROUP BY Q5
-ORDER BY Q5 ASC;
+GROUP BY Q5;
 """
 
 try:
     df2 = run_query(sql2)
     col2_1, col2_2 = st.columns([2, 1])
+    
     with col2_1:
-        fig2 = px.bar(df2, x='응답자_수', y='응답_점수', orientation='h',
-                      title="젠더갈등 원인 응답 분포 (가로 막대)",
-                      labels={'응답_점수': '응답 점수 (1: 전혀 그렇지 않다 ~ 5: 매우 그렇다)'},
-                      color='응답자_수', color_continuous_scale='Viridis')
-        fig2.update_layout(yaxis={'type': 'category'})
+        fig2 = px.bar(df2, x='응답자_수', y='갈등_원인_항목', orientation='h',
+                      title="주요 젠더갈등 원인 분석",
+                      labels={'갈등_원인_항목': '갈등 원인 항목', '응답자_수': '응답자 수'},
+                      color='응답자_수', color_continuous_scale='Viridis',
+                      text_auto=True)
+        
+        # [수정] 위에서부터 5, 1, 2, 3, 4 순서로 나오도록 리스트 순서를 뒤집었습니다.
+        fig2.update_layout(yaxis={'categoryorder':'array', 'categoryarray': [
+            '남성에게 주어지는 특혜와 차별',       # (맨 아래 - 4번)
+            '여성에게 주어지는 특혜와 차별',       # (3번)
+            '가부장적 사회문화',                  # (2번)
+            '어려서부터 학습된 성별에 대한 고정관념', # (1번)
+            '언론 및 방송매체의 성별 갈등 조장'     # (맨 위 - 5번)
+        ]})
+        
         st.plotly_chart(fig2, use_container_width=True)
+        
     with col2_2:
         st.subheader("📝 인사이트")
-        st.info("갈등 원인에 대한 응답자들의 공감 분포를 나타냅니다.")
-        # [복구] SQL 보기 칸 추가
+        st.info("응답자들은 '언론 및 방송매체의 성별 갈등 조장'을 젠더갈등의 가장 압도적인 원인으로 인식하고 있습니다.")
         with st.expander("💾 사용한 SQL 보기"):
             st.code(sql2, language='sql')
 except Exception as e:
