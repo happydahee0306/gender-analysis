@@ -160,9 +160,14 @@ try:
 except Exception as e:
     st.error(f"차트 2 로드 중 오류 발생: {e}")
 
-# --- 차트 3: 임금 및 소득수준 불평등 평가 ---
+
+# --- 차트 3: 성별간 임금/소득수준 불평등 평가 ---
 st.markdown("---")
-st.header("3. 성별 남녀간 임금 및 소득수준 불평등 평가")
+# [요청 반영 1] 제목 변경
+st.header("3. 성별간 임금/소득수준 불평등 평가")
+
+# 제목 아래 간단한 설명 추가 (선택사항)
+st.write("성별에 따른 경제적 보상(임금 및 소득)에 대한 불평등 체감도를 분석한 결과입니다.")
 
 sql3 = """
 SELECT 
@@ -179,19 +184,33 @@ GROUP BY SQ1;
 try:
     df3 = run_query(sql3)
     col3_1, col3_2 = st.columns([2, 1])
+    
     with col3_1:
+        # [요청 반영 2, 4] y축 이름 변경 및 성별 색상(핑크, 블루) 적용
         fig3 = px.bar(df3, x='성별', y='Q13_5_평균', color='성별',
                       title="성별에 따른 임금/소득 불평등 인식 평균",
-                      text_auto=True, color_discrete_sequence=['#ffcc99','#99ff99'])
+                      labels={'Q13_5_평균': '성별 임금/소득 불평등이 어느정도라고 생각하십니까 (0~5점)'},
+                      text_auto=True, 
+                      color_discrete_sequence=['#ff9999','#66b3ff']) # 차트 1과 동일한 핑크/블루 적용
+        
+        # [요청 반영 3] y축 범위를 0~5점으로 고정
+        fig3.update_yaxes(range=[0, 5])
+        
         st.plotly_chart(fig3, use_container_width=True)
+        
     with col3_2:
         st.subheader("📝 인사이트")
         st.info("경제적 측면에서의 불평등 체감도를 성별로 비교합니다.")
-        # [복구] SQL 보기 칸 추가
+        
+        # 기존에 있던 SQL 보기 칸 유지
         with st.expander("💾 사용한 SQL 보기"):
             st.code(sql3, language='sql')
+            
 except Exception as e:
     st.error(f"차트 3 로드 중 오류 발생: {e}")
 
-st.markdown("---")
-st.caption("데이터 출처: 공공데이터포털 기반 분석 데이터 | 제작: 젠더갈등 인식 분석 대시보드")
+
+
+
+
+
