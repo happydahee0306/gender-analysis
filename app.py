@@ -10,16 +10,28 @@ st.title("📊 성별 및 사회 갈등 인식 분석 대시보드")
 st.markdown("---")
 
 # 2. 데이터베이스 연결 확인
-db_file = "kor_data.db"
+db_file = "kor_data.csv"
 
-if not os.path.exists(db_file):
-    st.error(f"❌ '{db_file}' 파일을 찾을 수 없습니다. 데이터베이스 파일이 같은 폴더에 있는지 확인해주세요.")
+if not os.path.exists(csv_file):
+    st.error(f"❌ '{csv_file}' 파일을 찾을 수 없습니다. GitHub에 CSV 파일이 있는지 확인해주세요.")
     st.stop()
 
 def run_query(query):
-    """SQL 쿼리를 실행하여 판다스 데이터프레임으로 반환하는 함수"""
-    with sqlite3.connect(db_file) as conn:
-        return pd.read_sql(query, conn)
+    """CSV를 읽어 가상 DB를 만들고 SQL을 실행하는 함수"""
+    # 1. 임시로 메모리에 데이터베이스를 만듭니다
+    conn = sqlite3.connect(':memory:')
+    
+    # 2. CSV 파일을 읽어옵니다
+    df_from_csv = pd.read_csv(csv_file)
+    
+    # 3. 이 데이터를 'kor_data'라는 이름의 테이블로 가상 DB에 저장합니다
+    # 이렇게 하면 아래의 SQL 쿼리들이 'FROM kor_data'를 인식할 수 있습니다
+    df_from_csv.to_sql('kor_data', conn, index=False, if_exists='replace')
+    
+    # 4. 쿼리 실행 후 결과 반환
+    result = pd.read_sql(query, conn)
+    conn.close()
+    return result
 
 # --- 차트 1: 성별 남녀평등수준 평가 ---
 st.header("1. 성별 남녀평등수준 평가")
