@@ -115,4 +115,36 @@ except Exception as e:
 
 # --- 차트 3: 임금 및 소득수준 불평등 평가 ---
 st.markdown("---")
-st
+st.header("3. 성별 남녀간 임금 및 소득수준 불평등 평가")
+
+sql3 = """
+SELECT 
+    CASE 
+        WHEN SQ1 = 1 THEN '여자'
+        WHEN SQ1 = 2 THEN '남자'
+        ELSE '기타' 
+    END AS 성별,
+    ROUND(AVG(COALESCE(Q13_5, 0)), 2) AS Q13_5_평균
+FROM kor_data
+GROUP BY SQ1;
+"""
+
+try:
+    df3 = run_query(sql3)
+    col3_1, col3_2 = st.columns([2, 1])
+    with col3_1:
+        fig3 = px.bar(df3, x='성별', y='Q13_5_평균', color='성별',
+                      title="성별에 따른 임금/소득 불평등 인식 평균",
+                      text_auto=True, color_discrete_sequence=['#ffcc99','#99ff99'])
+        st.plotly_chart(fig3, use_container_width=True)
+    with col3_2:
+        st.subheader("📝 인사이트")
+        st.info("경제적 측면에서의 불평등 체감도를 성별로 비교합니다.")
+        # [복구] SQL 보기 칸 추가
+        with st.expander("💾 사용한 SQL 보기"):
+            st.code(sql3, language='sql')
+except Exception as e:
+    st.error(f"차트 3 로드 중 오류 발생: {e}")
+
+st.markdown("---")
+st.caption("데이터 출처: 공공데이터포털 기반 분석 데이터 | 제작: 젠더갈등 인식 분석 대시보드")
