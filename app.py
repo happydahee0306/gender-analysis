@@ -166,73 +166,44 @@ st.markdown("---")
 st.header("3. 성별간 임금/소득수준 불평등 평가")
 
 sql3 = """
-SELECT 
-    CASE 
-        WHEN SQ1 = 1 THEN '여자'
-        WHEN SQ1 = 2 THEN '남자'
-        ELSE '기타' 
-    END AS 성별,
-    ROUND(AVG(COALESCE(Q13_5, 0)), 2) AS Q13_5_평균
-FROM kor_data
-GROUP BY SQ1;
+SELECT CASE WHEN SQ1 = 1 THEN '여자' WHEN SQ1 = 2 THEN '남자' ELSE '기타' END AS 성별,
+       ROUND(AVG(COALESCE(Q13_5, 0)), 2) AS Q13_5_평균 FROM kor_data GROUP BY SQ1;
 """
 
 try:
     df3 = run_query(sql3)
     col3_1, col3_2 = st.columns([1.2, 1])
-    
     with col3_1:
-        fig3 = px.bar(df3, x='성별', y='Q13_5_평균', color='성별',
-                      title="성별에 따른 임금/소득 불평등 인식 평균",
+        fig3 = px.bar(df3, x='성별', y='Q13_5_평균', color='성별', title="성별에 따른 임금/소득 불평등 인식 평균",
                       labels={'Q13_5_평균': '성별 임금/소득 불평등이 어느정도라고 생각하십니까 (0~5점)'},
-                      text_auto=True, 
-                      color_discrete_sequence=['#ff9999','#66b3ff'])
+                      text_auto=True, color_discrete_sequence=['#ff9999','#66b3ff'])
         fig3.update_yaxes(range=[0, 5])
         st.plotly_chart(fig3, use_container_width=True)
-        
     with col3_2:
         st.subheader("🧐 데이터 분석 인사이트")
-        st.info("**요약:** 주관적 체감도 면에서 남성(2.87점)이 여성(2.31점)보다 임금 불평등 문제를 더 심각하게 인지하는 '인식의 역전'이 나타났습니다.")
-        
-        with st.expander("🔍 임금 및 소득 불평등 상세 분석 보기", expanded=True):
+        st.info("**요약:** 남성(2.87점)이 여성(2.31점)보다 임금 불평등 문제를 더 심각하게 인지하는 역전 현상이 보입니다.")
+        with st.expander("🔍 상세 분석 보기", expanded=True):
             st.markdown("""
-            이 조사는 0~5점 사이 응답 결과이며, 점수가 높을수록 불평등이 심각하다고 느끼는 것을 의미합니다.
-
-            **1. 경제적 불평등에 대한 전반적 인식**
-            남녀 모두 2점 중후반대를 기록하며, 한국 사회의 임금 및 소득 격차 문제를 '어느 정도 존재하며 무시할 수 없는 수준'으로 인지하고 있습니다.
-
-            **2. 예상외의 결과: 남성이 더 높게 평가하는 심각도**
-            * **남성(2.87점) > 여성(2.31점):** 이전 자료들과 정반대의 양상입니다.
-            * **해석:** 남성들은 기업 내 변화를 '격차가 심각하다는 신호'로 강하게 받아들이는 반면, 여성들은 더딘 변화 속도에 오히려 보수적으로 평가했을 가능성이 있습니다.
-
-            **3. 경제적 측면의 인사이트**
-            * **인식의 역전 현상:** 구체적인 경제 지표에 대해서는 남성들이 이 상황을 더 '특수한(심각한) 상황'으로 보고 있다는 점이 흥미롭습니다.
-            * **사회적 담론의 영향:** 지속적인 언론 노출을 통해 남성 집단 내에서도 사회적 위기의식이 상당 부분 형성되었음을 시사합니다.
+            **1. 인식의 역전:** 주관적 체감도 면에서 남성이 문제를 더 특수하고 심각하게 받아들이는 경향이 있습니다.
+            **2. 사회적 담론:** 지속적인 언론 노출로 인해 남성 집단 내에서도 위기의식이 형성되었음을 시사합니다.
             """)
-        
         with st.expander("💾 사용한 SQL 보기"):
             st.code(sql3, language='sql')
 
-# --- 💡 종합 결론: 대시보드 마무리 ---
+    # --- 💡 종합 결론 섹션 (차트 3 try 블록 내부로 이동) ---
+    st.markdown("---")
+    st.success("### 💡 종합 결론 (1~3번 자료 통합 분석)")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("**분석 요약:** 사회 전반 평등은 여성이 낮게 보나, 임금 불평등 심각성은 남성이 더 높게 평가함.")
+    with c2:
+        st.markdown("**시사점:** 미디어 조장 속에서 경제적 격차에 대한 공통된 위기의식을 해결하는 것이 갈등 해소의 핵심입니다.")
+
+except Exception as e:
+    st.error(f"차트 3 오류: {e}")
+
 st.markdown("---")
-st.success("### 💡 종합 결론 (1~3번 자료 통합 분석)")
-col_final_1, col_final_2 = st.columns([1, 1])
-
-with col_final_1:
-    st.markdown("""
-    **분석된 사회적 단면:**
-    1. **사회 전반의 평등:** 여성이 훨씬 부정적으로 평가함.
-    2. **갈등의 원인:** 남녀 모두 '언론의 조장'을 1위로 꼽음.
-    3. **임금 불평등:** 오히려 남성이 그 심각성을 더 높게 평가함.
-    """)
-
-with col_final_2:
-    st.markdown("""
-    **핵심 시사점:**
-    사람들은 **"사회 전반은 불평등(여성)하고 미디어가 갈등을 부추기지만, 경제적 격차만큼은 확실히 심각한 문제(남성)"**라고 인식하고 있습니다. 이러한 성별 간 인식의 미
-
-
-
+st.caption("데이터 출처: 공공데이터포털 | 제작: Choi Da-hee 젠더갈등 분석 대시보드")
 
 
 
