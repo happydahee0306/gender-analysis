@@ -6,7 +6,14 @@ import os
 
 # 1. 페이지 설정 및 제목
 st.set_page_config(page_title="젠더갈등 인식 분석 대시보드", layout="wide")
+
+# 대제목
 st.title("📊 젠더갈등 인식 분석 대시보드")
+
+# [요청 반영] 소제목 두 줄 추가
+st.subheader("2014404 경영학부 최다희")
+st.markdown("#### 경영정보처리론 (001) 수시과제2")
+
 st.markdown("---")
 
 # 2. 데이터 연결 설정
