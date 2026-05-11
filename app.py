@@ -5,10 +5,10 @@ import plotly.express as px
 import os
 
 # 1. 페이지 설정 및 제목
-st.set_page_config(page_title="젠더갈등 인식 분석 대시보드", layout="wide")
+st.set_page_config(page_title="젠더갈등 인식분석", layout="wide")
 
 # 대제목
-st.title("📊 젠더갈등 인식 분석 대시보드  -  부산지역 2030 청년세대")
+st.title("📊 젠더갈등 인식분석  -  부산지역 2030 청년세대")
 
 # [요청 반영] 대제목과 소제목 사이 출처 링크 추가
 st.caption("출처: https://kossda.snu.ac.kr/handle/20.500.12236/26268")
