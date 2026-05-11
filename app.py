@@ -6,7 +6,7 @@ import os
 
 # 1. 페이지 설정 및 제목
 st.set_page_config(page_title="공공데이터 분석 대시보드", layout="wide")
-st.title("📊 성별 및 사회 갈등 인식 분석 대시보드")
+st.title("📊 젠더갈등 인식 분석 대시보드")
 st.markdown("---")
 
 # 2. 데이터 연결 설정 (CSV 파일을 가상 DB로 사용)
@@ -51,7 +51,7 @@ SELECT
         COALESCE(Q2_4, 0) + COALESCE(Q2_5, 0) + COALESCE(Q2_6, 0) + 
         COALESCE(Q2_7, 0) + COALESCE(Q2_8, 0) + COALESCE(Q2_9, 0) + 
         COALESCE(Q2_10, 0)
-    ) / 10 AS Q2_합계_평균
+    ) / 10 AS 남녀평등수준평가(만점:10)
 FROM kor_data
 GROUP BY SQ1;
 """
